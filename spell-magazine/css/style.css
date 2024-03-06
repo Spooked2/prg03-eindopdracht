@@ -25,7 +25,20 @@
 
 body {
     margin: 0;
-    padding: 0 25vw;
+    padding: 3vw 20vw 5vw;
+    background-color: blanchedalmond;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+}
+
+h1 {
+    margin: 0;
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
 }
 
 h1,
@@ -36,8 +49,33 @@ h2 {
 h3 {
     font-family: "Nodesto Caps Condensed", sans-serif;
     font-weight: lighter;
+    font-size: 1.5rem;
 }
 
 p {
     font-family: "Bookinsanity", sans-serif;
+    font-size: 1rem;
+}
+
+section {
+    background-color: navajowhite;
+    padding: 0.5vw 2vw;
+    border: solid black 2px;
+}
+
+#allSpells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1vw;
+}
+
+article {
+    padding: 0.5vw;
+    width: 10vw;
+    border: solid black 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    background-color: bisque;
 }
