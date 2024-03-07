@@ -4,6 +4,8 @@ window.addEventListener('load', init);
 //Global variables
 let preparedSpells;
 let allSpells;
+let descriptionModal;
+let fetchedDetails = [];
 
 function init() {
 
@@ -13,8 +15,14 @@ function init() {
     preparedSpells = document.getElementById('preparedSpells');
     preparedSpells.addEventListener('click', spellClickHandler);
 
+    descriptionModal = document.getElementById('spellDescriptionContainer');
+    descriptionModal.addEventListener('click', hideDetails);
+
     let loadSpellsButton = document.getElementById('loadSpells');
     loadSpellsButton.addEventListener('click', loadSpells);
+
+    let closeDescriptionButton = document.getElementById('closeDescription');
+    closeDescriptionButton.addEventListener('click', hideDetails);
 
 }
 
@@ -48,17 +56,18 @@ function AJAXSuccessHandler(data) {
     }
 
     //Checks if the data is an array
-    if ((data) => {
-        return data.constructor === Array;
-    }) {
+    if (Array.isArray(data)) {
         //Adds all the spells to the HTML document
         displayAllSpells(data);
         return;
     }
 
     //If the data is a single object it must be the details of a single spell
+    //Convert data to an article and save it so we don't have to fetch the same spell twice
+    convertToDetailArticle(data);
+
     //Show a popup containing details of the fetched spell
-    showSpellDetails(data);
+    showSpellDetails(data.index);
 
 }
 
@@ -69,6 +78,12 @@ function AJAXSuccessHandler(data) {
 function AJAXErrorHandler(data) {
     console.log(data);
 
+}
+
+function hideDetails(e) {
+    if (e.target.id === 'spellDescriptionContainer' || e.target.tagName === 'BUTTON') {
+        descriptionModal.style.display = 'none';
+    }
 }
 
 /**
@@ -98,17 +113,25 @@ function displayAllSpells(spellArray) {
     }
 }
 
+/**
+ * When a spell article is clicked, it displays the details of the spell
+ * @param {Event}e
+ */
 function spellClickHandler(e) {
     e.preventDefault();
 
     //Check if the clicked thing is an article
-    if (e.target.tagName !== 'ARTICLE') {
+    if (e.target.tagName === 'DIV') {
         return;
     }
 
-    //Fetch the details of the clicked spell
-    let url = `https://www.dnd5eapi.co/api/spells/${e.target.dataset.id}`;
-    AJAXFetch(url);
+    //Fetch the details of the clicked spell if it hasn't been fetched already
+    if (e.target.dataset.id in fetchedDetails) {
+        showSpellDetails(e.target.dataset.id);
+    } else {
+        let url = `https://www.dnd5eapi.co/api/spells/${e.target.dataset.id}`;
+        AJAXFetch(url);
+    }
 
 }
 
@@ -133,10 +156,12 @@ function addToDocument(spellArticle, prepared) {
 
 /**
  * Shows a pop-up containing all the details of a spell
- * @param {Object} spellDetails
+ * @param {String} spellIndex - An outerHTML string
  */
-function showSpellDetails(spellDetails) {
-    console.log(spellDetails);
+function showSpellDetails(spellIndex) {
+    let descriptionArticle = document.querySelector('#spellDescription article');
+    descriptionArticle.outerHTML = fetchedDetails[spellIndex];
+    descriptionModal.style.display = 'block';
 }
 
 /**
@@ -180,5 +205,92 @@ function convertToArticle(spellObject) {
 
 
     return spellArticle;
+
+}
+
+/**
+ * Converts a spell object to an HTML article and stores it's outerHTML in global array.
+ * The outerHTML is stored instead of the element itself because the data might need to be stored as a JSON file,
+ * and the JSON.stringify function does not like HTML element objects.
+ * JSON.parse would return empty objects if HTML element objects were put through the JSON.stringify function.
+ * @param {Object} spellObject - Object containing the details of a spell
+ */
+function convertToDetailArticle(spellObject) {
+    //Create article element and add index to dataset
+    let article = document.createElement('article');
+    article.dataset.index = spellObject.index;
+
+    //Create h3 element for the spell's name
+    let name = document.createElement('h3');
+    name.innerText = spellObject.name;
+    article.appendChild(name);
+
+    //Create p element detailing the spells level, school and if it can be cast as a ritual
+    let levelSchoolRitual = document.createElement('p');
+    levelSchoolRitual.innerText = spellObject.level;
+    let levelSuffix;
+    switch (spellObject.level) {
+        case 1:
+            levelSuffix = 'st';
+            break;
+        case 2:
+            levelSuffix = 'nd';
+            break;
+        case 3:
+            levelSuffix = 'rd';
+            break;
+        default:
+            levelSuffix = 'th';
+    }
+    levelSchoolRitual.innerText += `${levelSuffix}-level ${spellObject.school.name}`;
+    if (spellObject.ritual) {
+        levelSchoolRitual.innerText += '(ritual)';
+    }
+    article.appendChild(levelSchoolRitual);
+
+
+    //Create p elements for casting time, range, components and duration
+    let castingTime = document.createElement('p');
+    castingTime.innerText = `Casting Time: ${spellObject.casting_time}`;
+    article.appendChild(castingTime);
+
+    let range = document.createElement('p');
+    range.innerText = `Range: ${spellObject.range}`;
+    article.appendChild(range);
+
+    let components = document.createElement('p');
+    components.innerText = `Components: ${spellObject.components.join(', ')}`;
+    if (spellObject.material) {
+        components.innerText += ` (${spellObject.material})`;
+    }
+    article.appendChild(components);
+
+    let duration = document.createElement('p');
+    duration.innerText = 'Duration: ';
+    if (spellObject.concentration) {
+        duration.innerText += `Concentration, ${spellObject.duration.toLowerCase()}`;
+    } else {
+        duration.innerText += spellObject.duration;
+    }
+    article.appendChild(duration);
+
+    //Create div element for spell description
+    let description = document.createElement('div');
+    //Loop through all description items and add them as separate p elements to div
+    for (const descriptionItem of spellObject.desc) {
+        let descriptionElement = document.createElement('p');
+        descriptionElement.innerText = descriptionItem;
+        description.appendChild(descriptionElement);
+    }
+    article.appendChild(description);
+
+    //Add 'at higher levels' description if one exists
+    if (spellObject.higher_level.length > 0) {
+        let higherLevels = document.createElement('p');
+        higherLevels.innerText = `At higher levels: ${spellObject.higher_level.join(' ')}`;
+        article.appendChild(higherLevels);
+    }
+
+    fetchedDetails[spellObject.index] = article.outerHTML;
 
 }

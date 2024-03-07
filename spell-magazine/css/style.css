@@ -79,3 +79,26 @@ article {
     text-align: center;
     background-color: bisque;
 }
+
+#spellDescriptionContainer {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#spellDescription {
+    margin: 5vw auto;
+    width: 75%;
+}
+
+#spellDescription article {
+    width: 100%;
+    text-align: start;
+    padding: 2vw;
+}
