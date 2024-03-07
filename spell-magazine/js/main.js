@@ -271,6 +271,9 @@ function convertToDetailArticle(spellObject) {
     let article = document.createElement('article');
     article.dataset.index = spellObject.index;
 
+    //Create separate body div for styling purposes
+    let bodyDiv = document.createElement('div');
+
     //Create h3 element for the spell's name
     let name = document.createElement('h3');
     name.innerText = spellObject.name;
@@ -297,24 +300,24 @@ function convertToDetailArticle(spellObject) {
     if (spellObject.ritual) {
         levelSchoolRitual.innerText += '(ritual)';
     }
-    article.appendChild(levelSchoolRitual);
+    bodyDiv.appendChild(levelSchoolRitual);
 
 
     //Create p elements for casting time, range, components and duration
     let castingTime = document.createElement('p');
     castingTime.innerText = `Casting Time: ${spellObject.casting_time}`;
-    article.appendChild(castingTime);
+    bodyDiv.appendChild(castingTime);
 
     let range = document.createElement('p');
     range.innerText = `Range: ${spellObject.range}`;
-    article.appendChild(range);
+    bodyDiv.appendChild(range);
 
     let components = document.createElement('p');
     components.innerText = `Components: ${spellObject.components.join(', ')}`;
     if (spellObject.material) {
         components.innerText += ` (${spellObject.material})`;
     }
-    article.appendChild(components);
+    bodyDiv.appendChild(components);
 
     let duration = document.createElement('p');
     duration.innerText = 'Duration: ';
@@ -323,24 +326,27 @@ function convertToDetailArticle(spellObject) {
     } else {
         duration.innerText += spellObject.duration;
     }
-    article.appendChild(duration);
+    bodyDiv.appendChild(duration);
 
     //Create div element for spell description
     let description = document.createElement('div');
+    description.id = 'description';
     //Loop through all description items and add them as separate p elements to div
     for (const descriptionItem of spellObject.desc) {
         let descriptionElement = document.createElement('p');
         descriptionElement.innerText = descriptionItem;
         description.appendChild(descriptionElement);
     }
-    article.appendChild(description);
+    bodyDiv.appendChild(description);
 
     //Add 'at higher levels' description if one exists
     if (spellObject.higher_level.length > 0) {
         let higherLevels = document.createElement('p');
         higherLevels.innerText = `At higher levels: ${spellObject.higher_level.join(' ')}`;
-        article.appendChild(higherLevels);
+        bodyDiv.appendChild(higherLevels);
     }
+
+    article.appendChild(bodyDiv);
 
     fetchedDetails[spellObject.index] = article.outerHTML;
 

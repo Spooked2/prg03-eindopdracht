@@ -25,8 +25,8 @@
 
 body {
     margin: 0;
-    padding: 3vw 20vw 5vw;
-    background-color: blanchedalmond;
+    padding: 0 20vw 5vw;
+    background-color: #FFFCF2;
     display: flex;
     flex-direction: column;
     gap: 2vw;
@@ -34,16 +34,21 @@ body {
 
 h1 {
     margin: 0;
+    padding: 5vw 2vw;
     font-size: 3rem;
 }
 
 h2 {
     font-size: 2rem;
+    padding: 2vw;
+    margin: 0;
 }
 
 h1,
 h2 {
     font-family: "Mr Eaves Small Caps", sans-serif;
+    background-color: #786B3D;
+    color: white;
 }
 
 h3 {
@@ -58,13 +63,13 @@ p {
 }
 
 section {
-    background-color: navajowhite;
-    padding: 0.5vw 2vw;
+    background-color: #FFE68C;
     border: solid black 2px;
 }
 
 #allSpells {
     display: flex;
+    padding: 2vw;
     flex-wrap: wrap;
     gap: 1vw;
 }
@@ -77,7 +82,7 @@ article {
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
-    background-color: bisque;
+    background-color: #FFFCF2;
     user-select: none;
 }
 
@@ -101,10 +106,32 @@ article {
 #spellDescription article {
     width: 100%;
     text-align: start;
+    user-select: text;
+    padding: 0;
+}
+
+#spellDescription h3 {
+    font-size: 4rem;
+    margin: 0;
     padding: 2vw;
-    user-select: all;
+    background-color: #FFE68C;
+}
+
+#spellDescription p {
+    font-size: 1.3rem;
+    margin: 0;
+    padding-bottom: 0.1vw;
+}
+
+#spellDescription article>div {
+    padding: 2vw;
+}
+
+#description {
+    padding: 1vw 0;
 }
 
 .favorite {
-    border: solid gold 3px;
+    background-color: #393901;
+    color: gold;
 }
