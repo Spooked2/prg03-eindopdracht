@@ -6,6 +6,7 @@ let preparedSpells;
 let allSpells;
 let descriptionModal;
 let fetchedDetails = [];
+let favorites = {};
 
 function init() {
 
@@ -17,6 +18,10 @@ function init() {
 
     descriptionModal = document.getElementById('spellDescriptionContainer');
     descriptionModal.addEventListener('click', hideDetails);
+
+    if (localStorage.getItem('favorites')) {
+        favorites = JSON.parse(localStorage.getItem('favorites'));
+    }
 
     let loadSpellsButton = document.getElementById('loadSpells');
     loadSpellsButton.addEventListener('click', loadSpells);
@@ -125,11 +130,38 @@ function spellClickHandler(e) {
         return;
     }
 
-    //Fetch the details of the clicked spell if it hasn't been fetched already
-    if (e.target.dataset.id in fetchedDetails) {
-        showSpellDetails(e.target.dataset.id);
+    //Get the correct id of clicked spell, even if target is not the article element
+    let id;
+    if (e.target.dataset.id) {
+        id = e.target.dataset.id;
     } else {
-        let url = `https://www.dnd5eapi.co/api/spells/${e.target.dataset.id}`;
+        id = e.target.parentElement.dataset.id;
+    }
+
+    if (e.target.id === 'favoriteButton') {
+        //Check if the spell is already a favorite
+        if (e.target.parentElement.classList.contains('favorite')) {
+            //If so, remove it from favorites
+            favorites[id] = false;
+            e.target.innerText = 'Add favorite';
+        } else {
+            //If not, add it to favorites
+            favorites[id] = true;
+            e.target.innerText = 'Remove favorite';
+        }
+
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+
+        e.target.parentElement.classList.toggle('favorite');
+
+        return;
+    }
+
+    //Fetch the details of the clicked spell if it hasn't been fetched already
+    if (id in fetchedDetails) {
+        showSpellDetails(id);
+    } else {
+        let url = `https://www.dnd5eapi.co/api/spells/${id}`;
         AJAXFetch(url);
     }
 
@@ -192,10 +224,29 @@ function convertToArticle(spellObject) {
         concentrationText.innerText = "Does not require concentration";
     }
 
+    //Add to favorites object if not yet added
+    if (!favorites[spellObject.id]) {
+        favorites[spellObject.id] = false;
+    }
+    //Add class if favorite
+    if (favorites[spellObject.id]) {
+        spellArticle.classList.add('favorite');
+    }
+
+    //Create favorite button
+    let favoriteButton = document.createElement('button');
+    favoriteButton.id = 'favoriteButton';
+    if (favorites[spellObject.id]) {
+        favoriteButton.innerText = 'Remove favorite';
+    } else {
+        favoriteButton.innerText = 'Add favorite';
+    }
+
     //Add all created elements to article
     spellArticle.appendChild(name);
     spellArticle.appendChild(levelText);
     spellArticle.appendChild(concentrationText);
+    spellArticle.appendChild(favoriteButton);
 
     //Add details to article's dataset
     spellArticle.dataset.name = spellObject.name;

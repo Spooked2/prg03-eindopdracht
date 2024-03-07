@@ -78,6 +78,7 @@ article {
     justify-content: space-between;
     text-align: center;
     background-color: bisque;
+    user-select: none;
 }
 
 #spellDescriptionContainer {
@@ -101,4 +102,9 @@ article {
     width: 100%;
     text-align: start;
     padding: 2vw;
+    user-select: all;
+}
+
+.favorite {
+    border: solid gold 3px;
 }
