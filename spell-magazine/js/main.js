@@ -307,26 +307,26 @@ function convertToDetailArticle(spellObject) {
 
     //Create p elements for casting time, range, components and duration
     let castingTime = document.createElement('p');
-    castingTime.innerText = `Casting Time: ${spellObject.casting_time}`;
+    castingTime.innerHTML = `<b>Casting Time:</b> ${spellObject.casting_time}`;
     bodyDiv.appendChild(castingTime);
 
     let range = document.createElement('p');
-    range.innerText = `Range: ${spellObject.range}`;
+    range.innerHTML = `<b>Range:</b> ${spellObject.range}`;
     bodyDiv.appendChild(range);
 
     let components = document.createElement('p');
-    components.innerText = `Components: ${spellObject.components.join(', ')}`;
+    components.innerHTML = `<b>Components:</b> ${spellObject.components.join(', ')}`;
     if (spellObject.material) {
-        components.innerText += ` (${spellObject.material})`;
+        components.innerHTML += ` (${spellObject.material})`;
     }
     bodyDiv.appendChild(components);
 
     let duration = document.createElement('p');
-    duration.innerText = 'Duration: ';
+    duration.innerHTML = '<b>Duration:</b> ';
     if (spellObject.concentration) {
-        duration.innerText += `Concentration, ${spellObject.duration.toLowerCase()}`;
+        duration.innerHTML += `Concentration, ${spellObject.duration.toLowerCase()}`;
     } else {
-        duration.innerText += spellObject.duration;
+        duration.innerHTML += spellObject.duration;
     }
     bodyDiv.appendChild(duration);
 
@@ -344,7 +344,7 @@ function convertToDetailArticle(spellObject) {
     //Add 'at higher levels' description if one exists
     if (spellObject.higher_level.length > 0) {
         let higherLevels = document.createElement('p');
-        higherLevels.innerText = `At higher levels: ${spellObject.higher_level.join(' ')}`;
+        higherLevels.innerHTML = `<b>At higher levels:</b> ${spellObject.higher_level.join(' ')}`;
         bodyDiv.appendChild(higherLevels);
     }
 
