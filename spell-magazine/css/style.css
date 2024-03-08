@@ -84,6 +84,7 @@ article {
     text-align: center;
     background-color: #FFFCF2;
     user-select: none;
+    cursor: pointer;
 }
 
 #spellDescriptionContainer {
@@ -108,17 +109,18 @@ article {
     text-align: start;
     user-select: text;
     padding: 0;
+    cursor: auto;
 }
 
 #spellDescription h3 {
-    font-size: 4rem;
+    font-size: 3rem;
     margin: 0;
     padding: 2vw;
     background-color: #FFE68C;
 }
 
 #spellDescription p {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     margin: 0;
     padding-bottom: 0.1vw;
 }

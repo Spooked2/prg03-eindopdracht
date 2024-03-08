@@ -150,8 +150,10 @@ function spellClickHandler(e) {
             e.target.innerText = 'Remove favorite';
         }
 
+        //Update the favorites object in local storage
         localStorage.setItem('favorites', JSON.stringify(favorites));
 
+        //Toggle favorite class for styling
         e.target.parentElement.classList.toggle('favorite');
 
         return;
@@ -219,9 +221,9 @@ function convertToArticle(spellObject) {
     //Create p containing the spell's concentration requirement
     let concentrationText = document.createElement('p');
     if (spellObject.concentration) {
-        concentrationText.innerText = "Requires concentration";
+        concentrationText.innerText = "Concentration";
     } else {
-        concentrationText.innerText = "Does not require concentration";
+        concentrationText.innerText = " ";
     }
 
     //Add to favorites object if not yet added
