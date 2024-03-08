@@ -67,7 +67,8 @@ section {
     border: solid black 2px;
 }
 
-#allSpells {
+#allSpells,
+#preparedSpells {
     display: flex;
     padding: 2vw;
     flex-wrap: wrap;

@@ -7,6 +7,7 @@ let allSpells;
 let descriptionModal;
 let fetchedDetails = [];
 let favorites = {};
+let prepared = {};
 
 function init() {
 
@@ -21,6 +22,10 @@ function init() {
 
     if (localStorage.getItem('favorites')) {
         favorites = JSON.parse(localStorage.getItem('favorites'));
+    }
+
+    if (localStorage.getItem('prepared')) {
+        prepared = JSON.parse(localStorage.getItem('prepared'));
     }
 
     let loadSpellsButton = document.getElementById('loadSpells');
@@ -138,24 +143,15 @@ function spellClickHandler(e) {
         id = e.target.parentElement.dataset.id;
     }
 
+    //Handle adding and removing from favorites if the target is the favorite button
     if (e.target.id === 'favoriteButton') {
-        //Check if the spell is already a favorite
-        if (e.target.parentElement.classList.contains('favorite')) {
-            //If so, remove it from favorites
-            favorites[id] = false;
-            e.target.innerText = 'Add favorite';
-        } else {
-            //If not, add it to favorites
-            favorites[id] = true;
-            e.target.innerText = 'Remove favorite';
-        }
+        favoriteHandler(e, id);
+        return;
+    }
 
-        //Update the favorites object in local storage
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-
-        //Toggle favorite class for styling
-        e.target.parentElement.classList.toggle('favorite');
-
+    //Handle adding and removing from prepared list
+    if (e.target.id === 'prepareButton') {
+        prepareHandler(e, id);
         return;
     }
 
@@ -169,16 +165,58 @@ function spellClickHandler(e) {
 
 }
 
+function favoriteHandler(e, id) {
+    //Check if the spell is already a favorite
+    if (e.target.parentElement.classList.contains('favorite')) {
+        //If so, remove it from favorites
+        favorites[id] = false;
+        e.target.innerText = 'Add favorite';
+    } else {
+        //If not, add it to favorites
+        favorites[id] = true;
+        e.target.innerText = 'Remove favorite';
+    }
+
+    //Update the favorites object in local storage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+
+    //Toggle favorite class for styling
+    e.target.parentElement.classList.toggle('favorite');
+}
+
+function prepareHandler(e, id) {
+    //Check if the spell is already prepared
+    if (e.target.parentElement.classList.contains('prepared')) {
+        //If so, remove it from prepared
+        prepared[id] = false;
+        //Move spell to 'all' list
+        allSpells.appendChild(e.target.parentElement);
+        e.target.innerText = 'Add to prepared';
+    } else {
+        //If not, add it to prepared
+        prepared[id] = true;
+        //Move spell to prepared list
+        preparedSpells.appendChild(e.target.parentElement);
+        e.target.innerText = 'Remove from prepared';
+    }
+
+
+    //Update the prepared object in local storage
+    localStorage.setItem('prepared', JSON.stringify(prepared));
+
+    //Toggle prepared class
+    e.target.parentElement.classList.toggle('prepared');
+}
+
 /**
  * Adds an article element to correct spell list
  * @param {HTMLElement} spellArticle
- * @param {Boolean} prepared
  */
-function addToDocument(spellArticle, prepared) {
+function addToDocument(spellArticle) {
     let spellList;
 
     //Select spell list based on if the spell is prepared
-    if (prepared) {
+    if (prepared[spellArticle.dataset.id]) {
         spellList = preparedSpells;
     } else {
         spellList = allSpells;
@@ -235,6 +273,11 @@ function convertToArticle(spellObject) {
         ritualText.innerText = ' ';
     }
 
+    //Add to prepared object if not yet added
+    if (!prepared[spellObject.id]) {
+        prepared[spellObject.id] = false;
+    }
+
     //Add to favorites object if not yet added
     if (!favorites[spellObject.id]) {
         favorites[spellObject.id] = false;
@@ -253,12 +296,22 @@ function convertToArticle(spellObject) {
         favoriteButton.innerText = 'Add favorite';
     }
 
+    //Create prepare button
+    let prepareButton = document.createElement('button');
+    prepareButton.id = 'prepareButton';
+    if (prepared[spellObject.id]) {
+        prepareButton.innerText = 'Remove from prepared';
+    } else {
+        prepareButton.innerText = 'Add to prepared';
+    }
+
     //Add all created elements to article
     spellArticle.appendChild(name);
     spellArticle.appendChild(levelText);
     spellArticle.appendChild(concentrationText);
     spellArticle.appendChild(ritualText);
     spellArticle.appendChild(favoriteButton);
+    spellArticle.appendChild(prepareButton);
 
     //Add details to article's dataset
     spellArticle.dataset.name = spellObject.name;
