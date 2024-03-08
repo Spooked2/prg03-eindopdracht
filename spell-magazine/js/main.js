@@ -68,7 +68,7 @@ function AJAXSuccessHandler(data) {
     }
 
     //If the data is a single object it must be the details of a single spell
-    //Convert data to an article and save it so we don't have to fetch the same spell twice
+    //Convert data to an article and save it, so we don't have to fetch the same spell twice
     convertToDetailArticle(data);
 
     //Show a popup containing details of the fetched spell
@@ -300,7 +300,7 @@ function convertToDetailArticle(spellObject) {
     }
     levelSchoolRitual.innerText += `${levelSuffix}-level ${spellObject.school.name}`;
     if (spellObject.ritual) {
-        levelSchoolRitual.innerText += '(ritual)';
+        levelSchoolRitual.innerText += ' (ritual)';
     }
     bodyDiv.appendChild(levelSchoolRitual);
 
