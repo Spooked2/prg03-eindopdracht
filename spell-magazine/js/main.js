@@ -205,6 +205,7 @@ function showSpellDetails(spellIndex) {
  * @param {String} spellObject.id
  * @param {Number} spellObject.level
  * @param {Boolean} spellObject.concentration
+ * @param {Boolean} spellObject.ritual
  */
 function convertToArticle(spellObject) {
     //Create a new article element
@@ -224,6 +225,14 @@ function convertToArticle(spellObject) {
         concentrationText.innerText = "Concentration";
     } else {
         concentrationText.innerText = " ";
+    }
+
+    //Create p containing spell's ability to be cast as a ritual
+    let ritualText = document.createElement('p');
+    if (spellObject.ritual) {
+        ritualText.innerText = 'Ritual'
+    } else {
+        ritualText.innerText = ' ';
     }
 
     //Add to favorites object if not yet added
@@ -248,6 +257,7 @@ function convertToArticle(spellObject) {
     spellArticle.appendChild(name);
     spellArticle.appendChild(levelText);
     spellArticle.appendChild(concentrationText);
+    spellArticle.appendChild(ritualText);
     spellArticle.appendChild(favoriteButton);
 
     //Add details to article's dataset
@@ -255,6 +265,7 @@ function convertToArticle(spellObject) {
     spellArticle.dataset.id = spellObject.id;
     spellArticle.dataset.level = spellObject.level.toString();
     spellArticle.dataset.concentration = `${spellObject.concentration}`;
+    spellArticle.dataset.ritual = `${spellObject.ritual}`;
 
 
     return spellArticle;
