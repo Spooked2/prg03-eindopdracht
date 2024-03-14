@@ -119,7 +119,7 @@ function displayAllSpells(spellArray) {
     //Convert all spells to articles and adds them to the document
     for (const spell of spellArray) {
         let spellArticle = convertToArticle(spell);
-        addToDocument(spellArticle, false);
+        addToDocument(spellArticle);
     }
 }
 
@@ -240,9 +240,16 @@ function showSpellDetails(spellIndex) {
  * Converts a spell object to an HTML article
  * @param {Object} spellObject
  * @param {String} spellObject.name
- * @param {String} spellObject.id
- * @param {Number} spellObject.level
+ * @param {String} spellObject.index
+ * @param {String} spellObject.level
+ * @param {String} spellObject.school
+ * @param {String} spellObject.casting_time
+ * @param {String} spellObject.range
+ * @param {String} spellObject.duration
+ * @param {String} [spellObject.material]
  * @param {Boolean} spellObject.concentration
+ * @param {Boolean} spellObject.verbal
+ * @param {Boolean} spellObject.somatic
  * @param {Boolean} spellObject.ritual
  */
 function convertToArticle(spellObject) {
@@ -253,9 +260,10 @@ function convertToArticle(spellObject) {
     let name = document.createElement('h3');
     name.innerText = spellObject.name;
 
-    //Create p containing the spell's level
+    //Create p containing the spell's level and school
     let levelText = document.createElement('p');
-    levelText.innerText = `Level ${spellObject.level} spell`;
+    let suffix = getNumberSuffix(spellObject.level);
+    levelText.innerText = `${spellObject.level}${suffix}-level ${spellObject.school}`;
 
     //Create p containing the spell's concentration requirement
     let concentrationText = document.createElement('p');
@@ -274,23 +282,23 @@ function convertToArticle(spellObject) {
     }
 
     //Add to prepared object if not yet added
-    if (!prepared[spellObject.id]) {
-        prepared[spellObject.id] = false;
+    if (!prepared[spellObject.index]) {
+        prepared[spellObject.index] = false;
     }
 
     //Add to favorites object if not yet added
-    if (!favorites[spellObject.id]) {
-        favorites[spellObject.id] = false;
+    if (!favorites[spellObject.index]) {
+        favorites[spellObject.index] = false;
     }
     //Add class if favorite
-    if (favorites[spellObject.id]) {
+    if (favorites[spellObject.index]) {
         spellArticle.classList.add('favorite');
     }
 
     //Create favorite button
     let favoriteButton = document.createElement('button');
     favoriteButton.id = 'favoriteButton';
-    if (favorites[spellObject.id]) {
+    if (favorites[spellObject.index]) {
         favoriteButton.innerText = 'Remove favorite';
     } else {
         favoriteButton.innerText = 'Add favorite';
@@ -299,7 +307,7 @@ function convertToArticle(spellObject) {
     //Create prepare button
     let prepareButton = document.createElement('button');
     prepareButton.id = 'prepareButton';
-    if (prepared[spellObject.id]) {
+    if (prepared[spellObject.index]) {
         prepareButton.innerText = 'Remove from prepared';
     } else {
         prepareButton.innerText = 'Add to prepared';
@@ -315,7 +323,7 @@ function convertToArticle(spellObject) {
 
     //Add details to article's dataset
     spellArticle.dataset.name = spellObject.name;
-    spellArticle.dataset.id = spellObject.id;
+    spellArticle.dataset.id = spellObject.index;
     spellArticle.dataset.level = spellObject.level.toString();
     spellArticle.dataset.concentration = `${spellObject.concentration}`;
     spellArticle.dataset.ritual = `${spellObject.ritual}`;
@@ -330,7 +338,20 @@ function convertToArticle(spellObject) {
  * The outerHTML is stored instead of the element itself because the data might need to be stored as a JSON file,
  * and the JSON.stringify function does not like HTML element objects.
  * JSON.parse would return empty objects if HTML element objects were put through the JSON.stringify function.
- * @param {Object} spellObject - Object containing the details of a spell
+ * @param {Object} spellObject
+ * @param {String} spellObject.name
+ * @param {String} spellObject.index
+ * @param {String} spellObject.level
+ * @param {String} spellObject.school
+ * @param {String} spellObject.casting_time
+ * @param {String} spellObject.range
+ * @param {String} spellObject.duration
+ * @param {String} spellObject.desc
+ * @param {String} [spellObject.material]
+ * @param {Array} spellObject.components
+ * @param {Array} spellObject.higher_level
+ * @param {Boolean} spellObject.concentration
+ * @param {Boolean} spellObject.ritual
  */
 function convertToDetailArticle(spellObject) {
     //Create article element and add index to dataset
@@ -348,20 +369,9 @@ function convertToDetailArticle(spellObject) {
     //Create p element detailing the spells level, school and if it can be cast as a ritual
     let levelSchoolRitual = document.createElement('p');
     levelSchoolRitual.innerText = spellObject.level;
-    let levelSuffix;
-    switch (spellObject.level) {
-        case 1:
-            levelSuffix = 'st';
-            break;
-        case 2:
-            levelSuffix = 'nd';
-            break;
-        case 3:
-            levelSuffix = 'rd';
-            break;
-        default:
-            levelSuffix = 'th';
-    }
+
+    let levelSuffix = getNumberSuffix(spellObject.level);
+
     levelSchoolRitual.innerText += `${levelSuffix}-level ${spellObject.school.name}`;
     if (spellObject.ritual) {
         levelSchoolRitual.innerText += ' (ritual)';
@@ -416,4 +426,22 @@ function convertToDetailArticle(spellObject) {
 
     fetchedDetails[spellObject.index] = article.outerHTML;
 
+}
+
+function getNumberSuffix(number) {
+    let levelSuffix;
+    switch (number) {
+        case 1:
+            levelSuffix = 'st';
+            break;
+        case 2:
+            levelSuffix = 'nd';
+            break;
+        case 3:
+            levelSuffix = 'rd';
+            break;
+        default:
+            levelSuffix = 'th';
+    }
+    return levelSuffix;
 }
