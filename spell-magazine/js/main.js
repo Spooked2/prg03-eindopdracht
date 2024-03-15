@@ -10,7 +10,7 @@ let allSpells;
 let fetchedDetails = {};
 let favorites = {};
 let prepared = {};
-let paladinStats = {level:2, charisma:10}
+let paladinStats = {level: 2, charisma: 10}
 
 function init() {
 
@@ -24,7 +24,9 @@ function init() {
     descriptionModal.addEventListener('click', hideDetails);
 
     errorP = document.getElementById('error');
-    errorP.addEventListener('click', () => {errorP.style.display = 'none'});
+    errorP.addEventListener('click', () => {
+        errorP.style.display = 'none'
+    });
 
     if (localStorage.getItem('paladinStats')) {
         paladinStats = JSON.parse(localStorage.getItem('paladinStats'));
@@ -52,7 +54,9 @@ function init() {
     loadSpellsButton.addEventListener('click', loadSpells);
 
     let closeDescriptionButton = document.getElementById('closeDescription');
-    closeDescriptionButton.addEventListener('click', () => {descriptionModal.style.display = 'none'});
+    closeDescriptionButton.addEventListener('click', () => {
+        descriptionModal.style.display = 'none'
+    });
 
 }
 
@@ -248,10 +252,14 @@ function addToDocument(spellArticle) {
     //Select spell list based on if the spell is prepared
 
     if (prepared[spellArticle.dataset.id]) {
+        if (preparedSpells.children.length >= calculateMaxPrepared()) {
+            spellArticle.classList.add('overMax');
+        }
         preparedSpells.appendChild(spellArticle);
     } else {
         let suffix = getNumberSuffix(parseInt(spellArticle.dataset.level, 10))
         let spellList = document.getElementById(`${spellArticle.dataset.level}${suffix}LevelList`);
+        spellArticle.classList.remove('overMax');
         spellList.appendChild(spellArticle);
     }
 
@@ -507,11 +515,14 @@ function formHandler(e) {
     //Update the maximum prepared value in form
     inputFields.maxPrepared.value = maxPrepared;
 
-    console.log(preparedSpells.children);
 
     //Add class to spells exceeding the max prepared limit
-    for (const preparedSpell of preparedSpells.children.toSpliced(0, (maxPrepared - 1))) {
-        preparedSpell.classlist.add('overMax');
+    for (const [key, preparedSpell] of Object.entries(preparedSpells.children)) {
+        if (parseInt(key, 10) >= maxPrepared) {
+            preparedSpell.classList.add('overMax');
+        } else {
+            preparedSpell.classList.remove('overMax');
+        }
     }
 
 }
