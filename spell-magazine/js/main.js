@@ -242,6 +242,10 @@ function prepareHandler(e, id) {
 
     //Toggle prepared class
     e.target.parentElement.classList.toggle('prepared');
+
+    //Recheck spells in prepared list and mark excessive ones
+    markExcessivePreparedSpells();
+
 }
 
 /**
@@ -324,6 +328,8 @@ function convertToArticle(spellObject) {
     //Add to prepared object if not yet added
     if (!prepared[spellObject.index]) {
         prepared[spellObject.index] = false;
+    } else {
+        spellArticle.classList.add('prepared');
     }
 
     //Add to favorites object if not yet added
@@ -510,20 +516,12 @@ function formHandler(e) {
     //Update the object in the local storage
     localStorage.setItem('paladinStats', JSON.stringify(paladinStats));
 
-    let maxPrepared = calculateMaxPrepared();
-
     //Update the maximum prepared value in form
-    inputFields.maxPrepared.value = maxPrepared;
+    inputFields.maxPrepared.value = calculateMaxPrepared();
 
 
     //Add class to spells exceeding the max prepared limit
-    for (const [key, preparedSpell] of Object.entries(preparedSpells.children)) {
-        if (parseInt(key, 10) >= maxPrepared) {
-            preparedSpell.classList.add('overMax');
-        } else {
-            preparedSpell.classList.remove('overMax');
-        }
-    }
+    markExcessivePreparedSpells();
 
 }
 
@@ -542,5 +540,17 @@ function calculateMaxPrepared() {
     }
 
     return number;
+
+}
+
+function markExcessivePreparedSpells() {
+
+    for (const [key, preparedSpell] of Object.entries(preparedSpells.children)) {
+        if (parseInt(key, 10) >= calculateMaxPrepared()) {
+            preparedSpell.classList.add('overMax');
+        } else {
+            preparedSpell.classList.remove('overMax');
+        }
+    }
 
 }
