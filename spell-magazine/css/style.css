@@ -70,8 +70,24 @@ p {
 }
 
 section {
+    display: none;
     background-color: #FFE68C;
     border: solid black 2px;
+}
+
+#loadSpells {
+    cursor: pointer;
+    padding: 2vw;
+    width: 50%;
+    margin: auto;
+    font-size: 2rem;
+    background-color: gray;
+    border: solid black 0.3vw;
+    border-radius: 1vw;
+}
+
+#loadSpells:hover {
+    background-color: #FFE68C;
 }
 
 #allSpells>div,
@@ -125,6 +141,7 @@ article {
     margin: 0;
     padding: 2vw;
     background-color: #FFE68C;
+    color: black;
 }
 
 #spellDescription p {
@@ -144,4 +161,12 @@ article {
 .favorite {
     background-color: #393901;
     color: gold;
+}
+
+#error {
+    display: none;
+    color: darkred;
+    font-size: 2rem;
+    cursor: pointer;
+    text-align: center;
 }

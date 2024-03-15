@@ -8,6 +8,7 @@ let descriptionModal;
 let fetchedDetails = {};
 let favorites = {};
 let prepared = {};
+let errorP;
 
 function init() {
 
@@ -19,6 +20,9 @@ function init() {
 
     descriptionModal = document.getElementById('spellDescriptionContainer');
     descriptionModal.addEventListener('click', hideDetails);
+
+    errorP = document.getElementById('error');
+    errorP.addEventListener('click', () => {errorP.style.display = 'none'});
 
     if (localStorage.getItem('favorites')) {
         favorites = JSON.parse(localStorage.getItem('favorites'));
@@ -89,6 +93,9 @@ function AJAXSuccessHandler(data) {
 function AJAXErrorHandler(data) {
     console.log(data);
 
+    errorP.style.display = 'block';
+    errorP.innerText = `Something went wrong! Report the following error to the owner: ${data}`;
+
 }
 
 function hideDetails(e) {
@@ -116,6 +123,12 @@ function loadSpells(e) {
 function displayAllSpells(spellArray) {
     //Delete the 'load spells' button
     document.getElementById('loadSpells').remove();
+
+    //Reveal hidden sections
+    let sections = document.getElementsByTagName('SECTION');
+    for (const section of sections) {
+        section.style.display = 'block';
+    }
 
     //Convert all spells to articles and adds them to the document
     for (const spell of spellArray) {
@@ -229,7 +242,8 @@ function addToDocument(spellArticle) {
  * @param {String} spellIndex - An outerHTML string
  */
 function showSpellDetails(spellIndex) {
-    let descriptionArticle = document.querySelector('#spellDescription article');
+    // let descriptionArticle = document.querySelector('#spellDescription article');
+    let descriptionArticle = document.querySelector('div[data-details]>article');
     descriptionArticle.outerHTML = fetchedDetails[spellIndex];
     descriptionModal.style.display = 'block';
 }
