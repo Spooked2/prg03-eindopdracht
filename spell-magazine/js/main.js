@@ -5,7 +5,7 @@ window.addEventListener('load', init);
 let preparedSpells;
 let allSpells;
 let descriptionModal;
-let fetchedDetails = [];
+let fetchedDetails = {};
 let favorites = {};
 let prepared = {};
 
@@ -27,6 +27,7 @@ function init() {
     if (localStorage.getItem('prepared')) {
         prepared = JSON.parse(localStorage.getItem('prepared'));
     }
+
 
     let loadSpellsButton = document.getElementById('loadSpells');
     loadSpellsButton.addEventListener('click', loadSpells);
@@ -189,17 +190,15 @@ function prepareHandler(e, id) {
     if (e.target.parentElement.classList.contains('prepared')) {
         //If so, remove it from prepared
         prepared[id] = false;
-        //Move spell to 'all' list
-        allSpells.appendChild(e.target.parentElement);
         e.target.innerText = 'Add to prepared';
     } else {
         //If not, add it to prepared
         prepared[id] = true;
-        //Move spell to prepared list
-        preparedSpells.appendChild(e.target.parentElement);
         e.target.innerText = 'Remove from prepared';
     }
 
+    //Move spell to correct list
+    addToDocument(e.target.parentElement);
 
     //Update the prepared object in local storage
     localStorage.setItem('prepared', JSON.stringify(prepared));
@@ -213,16 +212,15 @@ function prepareHandler(e, id) {
  * @param {HTMLElement} spellArticle
  */
 function addToDocument(spellArticle) {
-    let spellList;
-
     //Select spell list based on if the spell is prepared
-    if (prepared[spellArticle.dataset.id]) {
-        spellList = preparedSpells;
-    } else {
-        spellList = allSpells;
-    }
 
-    spellList.appendChild(spellArticle);
+    if (prepared[spellArticle.dataset.id]) {
+        preparedSpells.appendChild(spellArticle);
+    } else {
+        let suffix = getNumberSuffix(parseInt(spellArticle.dataset.level, 10))
+        let spellList = document.getElementById(`${spellArticle.dataset.level}${suffix}LevelList`);
+        spellList.appendChild(spellArticle);
+    }
 
 }
 
@@ -256,13 +254,13 @@ function convertToArticle(spellObject) {
     //Create a new article element
     let spellArticle = document.createElement('article');
 
-    //Create h3 containing the spell's name
-    let name = document.createElement('h3');
+    //Create h4 containing the spell's name
+    let name = document.createElement('h4');
     name.innerText = spellObject.name;
 
     //Create p containing the spell's level and school
     let levelText = document.createElement('p');
-    let suffix = getNumberSuffix(spellObject.level);
+    let suffix = getNumberSuffix(parseInt(spellObject.level, 10));
     levelText.innerText = `${spellObject.level}${suffix}-level ${spellObject.school}`;
 
     //Create p containing the spell's concentration requirement
@@ -370,7 +368,7 @@ function convertToDetailArticle(spellObject) {
     let levelSchoolRitual = document.createElement('p');
     levelSchoolRitual.innerText = spellObject.level;
 
-    let levelSuffix = getNumberSuffix(spellObject.level);
+    let levelSuffix = getNumberSuffix(parseInt(spellObject.level, 10));
 
     levelSchoolRitual.innerText += `${levelSuffix}-level ${spellObject.school.name}`;
     if (spellObject.ritual) {
@@ -428,6 +426,11 @@ function convertToDetailArticle(spellObject) {
 
 }
 
+/**
+ * Returns a suffix based on the input number. For example 1 would return 'st' as in 1st.
+ * @param {Number} number - The number you want the suffix of
+ * @returns {string} - suffix string
+ */
 function getNumberSuffix(number) {
     let levelSuffix;
     switch (number) {

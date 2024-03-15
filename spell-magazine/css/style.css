@@ -44,14 +44,21 @@ h2 {
     margin: 0;
 }
 
+h3 {
+    font-size: 1.7rem;
+    padding: 2vw;
+    margin: 0;
+}
+
 h1,
-h2 {
+h2,
+h3{
     font-family: "Mr Eaves Small Caps", sans-serif;
     background-color: #786B3D;
     color: white;
 }
 
-h3 {
+h4 {
     font-family: "Nodesto Caps Condensed", sans-serif;
     font-weight: lighter;
     font-size: 1.5rem;
@@ -67,7 +74,7 @@ section {
     border: solid black 2px;
 }
 
-#allSpells,
+#allSpells>div,
 #preparedSpells {
     display: flex;
     padding: 2vw;
