@@ -52,7 +52,7 @@ function init() {
     loadSpellsButton.addEventListener('click', loadSpells);
 
     let closeDescriptionButton = document.getElementById('closeDescription');
-    closeDescriptionButton.addEventListener('click', hideDetails);
+    closeDescriptionButton.addEventListener('click', () => {descriptionModal.style.display = 'none'});
 
 }
 
@@ -115,7 +115,7 @@ function AJAXErrorHandler(data) {
 }
 
 function hideDetails(e) {
-    if (e.target.id === 'spellDescriptionContainer' || e.target.tagName === 'BUTTON') {
+    if (e.target.id === 'spellDescriptionContainer') {
         descriptionModal.style.display = 'none';
     }
 }
@@ -502,8 +502,17 @@ function formHandler(e) {
     //Update the object in the local storage
     localStorage.setItem('paladinStats', JSON.stringify(paladinStats));
 
+    let maxPrepared = calculateMaxPrepared();
+
     //Update the maximum prepared value in form
-    inputFields.maxPrepared.value = calculateMaxPrepared();
+    inputFields.maxPrepared.value = maxPrepared;
+
+    console.log(preparedSpells.children);
+
+    //Add class to spells exceeding the max prepared limit
+    for (const preparedSpell of preparedSpells.children.toSpliced(0, (maxPrepared - 1))) {
+        preparedSpell.classlist.add('overMax');
+    }
 
 }
 

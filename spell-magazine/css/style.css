@@ -170,3 +170,7 @@ article {
     cursor: pointer;
     text-align: center;
 }
+
+.overMax {
+    border-color: darkred;
+}
