@@ -2,15 +2,15 @@
 window.addEventListener('load', init);
 
 //Global variables
-let preparedSpells;
-let allSpells;
 let descriptionModal;
-let paladinStats = {level:2, charisma:10}
-let fetchedDetails = {};
+let errorP;
+let preparedSpells;
 let inputFields;
+let allSpells;
+let fetchedDetails = {};
 let favorites = {};
 let prepared = {};
-let errorP;
+let paladinStats = {level:2, charisma:10}
 
 function init() {
 
