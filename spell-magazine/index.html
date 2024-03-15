@@ -28,6 +28,26 @@
 
     <h2>Your prepared spells</h2>
 
+    <div id="formContainer">
+
+        <form action="" id="form">
+
+            <label for="paladinLevel">Paladin level:</label>
+            <input type="number" id="paladinLevel" name="paladinLevel" min="2" max="20">
+
+            <label for="charismaScore">Charisma score:</label>
+            <input type="number" id="charismaScore" name="charismaScore" min="0" max="30">
+
+            <label for="maxPrepared">Maximum number of prepared spells:</label>
+            <input type="number" id="maxPrepared" name="maxPrepared" disabled>
+
+            <label for="currentPrepared">Current number of prepared spells:</label>
+            <input type="number" id="currentPrepared" name="currentPrepared" disabled>
+
+        </form>
+
+    </div>
+
     <div id="preparedSpells"></div>
 
 </section>

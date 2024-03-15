@@ -5,7 +5,9 @@ window.addEventListener('load', init);
 let preparedSpells;
 let allSpells;
 let descriptionModal;
+let paladinStats = {level:2, charisma:10}
 let fetchedDetails = {};
+let inputFields;
 let favorites = {};
 let prepared = {};
 let errorP;
@@ -24,6 +26,10 @@ function init() {
     errorP = document.getElementById('error');
     errorP.addEventListener('click', () => {errorP.style.display = 'none'});
 
+    if (localStorage.getItem('paladinStats')) {
+        paladinStats = JSON.parse(localStorage.getItem('paladinStats'));
+    }
+
     if (localStorage.getItem('favorites')) {
         favorites = JSON.parse(localStorage.getItem('favorites'));
     }
@@ -32,6 +38,15 @@ function init() {
         prepared = JSON.parse(localStorage.getItem('prepared'));
     }
 
+    inputFields = document.getElementsByTagName('INPUT');
+
+    inputFields.charismaScore.value = paladinStats.charisma;
+    inputFields.charismaScore.addEventListener('input', formHandler);
+
+    inputFields.paladinLevel.value = paladinStats.level;
+    inputFields.paladinLevel.addEventListener('input', formHandler);
+
+    inputFields.maxPrepared.value = calculateMaxPrepared();
 
     let loadSpellsButton = document.getElementById('loadSpells');
     loadSpellsButton.addEventListener('click', loadSpells);
@@ -74,6 +89,7 @@ function AJAXSuccessHandler(data) {
     if (Array.isArray(data)) {
         //Adds all the spells to the HTML document
         displayAllSpells(data);
+        inputFields.currentPrepared.value = preparedSpells.children.length;
         return;
     }
 
@@ -212,6 +228,9 @@ function prepareHandler(e, id) {
 
     //Move spell to correct list
     addToDocument(e.target.parentElement);
+
+    //Update form
+    inputFields.currentPrepared.value = preparedSpells.children.length;
 
     //Update the prepared object in local storage
     localStorage.setItem('prepared', JSON.stringify(prepared));
@@ -461,4 +480,46 @@ function getNumberSuffix(number) {
             levelSuffix = 'th';
     }
     return levelSuffix;
+}
+
+/**
+ * Handles changes in the form
+ * @param e - event
+ */
+function formHandler(e) {
+    console.log(e.target.value);
+
+    //Update paladin stats object
+    if (e.target.name === 'charismaScore') {
+        paladinStats.charisma = e.target.value;
+    } else if (e.target.name === 'paladinLevel') {
+        paladinStats.level = e.target.value;
+    } else {
+        return;
+    }
+
+    //Update the object in the local storage
+    localStorage.setItem('paladinStats', JSON.stringify(paladinStats));
+
+    //Update the maximum prepared value in form
+    inputFields.maxPrepared.value = calculateMaxPrepared();
+
+}
+
+/**
+ * Calculates the maximum number of spells that can be prepared based on paladin level and charisma score
+ * @returns {Number} number - Maximum amount of spells that can be prepared
+ */
+function calculateMaxPrepared() {
+
+    let number = Math.floor((paladinStats.level / 2));
+
+    number += Math.floor(((paladinStats.charisma - 10) / 2));
+
+    if (number < 1) {
+        number = 1;
+    }
+
+    return number;
+
 }
