@@ -199,7 +199,8 @@ function favoriteHandler(e, id) {
     //Check if the spell is already a favorite
     if (e.target.parentElement.classList.contains('favorite')) {
         //If so, remove it from favorites
-        favorites[id] = false;
+        //favorites[id] = false;
+        delete favorites[id];
         e.target.innerText = 'Add favorite';
     } else {
         //If not, add it to favorites
@@ -318,9 +319,9 @@ function convertToArticle(spellObject) {
     }
 
     //Add to favorites object if not yet added
-    if (!favorites[spellObject.index]) {
-        favorites[spellObject.index] = false;
-    }
+    // if (!favorites[spellObject.index]) {
+    //     favorites[spellObject.index] = false;
+    // }
     //Add class if favorite
     if (favorites[spellObject.index]) {
         spellArticle.classList.add('favorite');
