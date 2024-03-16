@@ -174,3 +174,12 @@ article {
 .overMax {
     background-color: indianred;
 }
+
+#formContainer {
+    border: black solid 1px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
