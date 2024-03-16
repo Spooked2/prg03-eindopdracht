@@ -14,45 +14,58 @@ let paladinStats = {level: 2, charisma: 10}
 
 function init() {
 
+    //Get the list of all spells and add a click event listener
     allSpells = document.getElementById('allSpells');
     allSpells.addEventListener('click', spellClickHandler);
 
+    //Get the list of all prepared spells and add a click event listener
     preparedSpells = document.getElementById('preparedSpells');
     preparedSpells.addEventListener('click', spellClickHandler);
 
+    //Get the modal for the detail description and add a click event listener
     descriptionModal = document.getElementById('spellDescriptionContainer');
     descriptionModal.addEventListener('click', hideDetails);
 
+    //Get the error text box and add a click event to hide it if clicked
     errorP = document.getElementById('error');
     errorP.addEventListener('click', () => {
         errorP.style.display = 'none'
     });
 
+    //Get stats from the local storage if there are any
     if (localStorage.getItem('paladinStats')) {
         paladinStats = JSON.parse(localStorage.getItem('paladinStats'));
     }
 
+    //Get favorites from local storage if there are any
     if (localStorage.getItem('favorites')) {
         favorites = JSON.parse(localStorage.getItem('favorites'));
     }
 
+    //Get prepared spells from local storage if there are any
     if (localStorage.getItem('prepared')) {
         prepared = JSON.parse(localStorage.getItem('prepared'));
     }
 
+    //Get all the input fields
     inputFields = document.getElementsByTagName('INPUT');
 
+    //Add an input event listener to level and charisma score fields
     inputFields.charismaScore.value = paladinStats.charisma;
     inputFields.charismaScore.addEventListener('input', formHandler);
 
     inputFields.paladinLevel.value = paladinStats.level;
     inputFields.paladinLevel.addEventListener('input', formHandler);
 
+    //Calculate and set the maximum amount of prepared spells
     inputFields.maxPrepared.value = calculateMaxPrepared();
 
+    //Get the load spells button and add a click event listener
     let loadSpellsButton = document.getElementById('loadSpells');
     loadSpellsButton.addEventListener('click', loadSpells);
 
+    //Get the 'close modal' button and make it close the modal if clicked
+    //'Display: none' was used, as I added this feature before I knew what a dialog tag was
     let closeDescriptionButton = document.getElementById('closeDescription');
     closeDescriptionButton.addEventListener('click', () => {
         descriptionModal.style.display = 'none'
@@ -113,8 +126,11 @@ function AJAXSuccessHandler(data) {
 function AJAXErrorHandler(data) {
     console.log(data);
 
-    errorP.style.display = 'block';
+    //Input the error message into the error paragraph
     errorP.innerText = `Something went wrong! Report the following error to the owner: ${data}`;
+
+    //Show the error paragraph
+    errorP.style.display = 'block';
 
 }
 
@@ -189,7 +205,7 @@ function spellClickHandler(e) {
         return;
     }
 
-    //Fetch the details of the clicked spell if it hasn't been fetched already
+    //Fetch the details of the clicked spell if it hasn't been fetched already, then display them
     if (id in fetchedDetails) {
         showSpellDetails(id);
     } else {
@@ -336,6 +352,7 @@ function convertToArticle(spellObject) {
     // if (!favorites[spellObject.index]) {
     //     favorites[spellObject.index] = false;
     // }
+
     //Add class if favorite
     if (favorites[spellObject.index]) {
         spellArticle.classList.add('favorite');
@@ -531,10 +548,13 @@ function formHandler(e) {
  */
 function calculateMaxPrepared() {
 
+    //The maximum number of spells a paladin can prepare is equal to their paladin level divided by 2 (rounded down)
     let number = Math.floor((paladinStats.level / 2));
 
+    //Plus their charisma modifier
     number += Math.floor(((paladinStats.charisma - 10) / 2));
 
+    //With a minimum of 1
     if (number < 1) {
         number = 1;
     }
