@@ -177,9 +177,42 @@ article {
 
 #formContainer {
     border: black solid 1px;
+    padding: 2vw;
 }
 
 form {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+form p,
+#prepared>p{
+    color: darkred;
+    font-size: 1.2rem;
+}
+
+#prepared>p {
+    padding: 2vw;
+    margin: 0;
+}
+
+form>div {
+    display: flex;
     flex-direction: column;
+}
+
+form>div>div {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+input {
+    font-size: 2rem;
+    padding: 0.5vw;
+    width: 5vw;
+    height: 5vw;
+    text-align: center;
+    background-color: #FFFCF2;
 }

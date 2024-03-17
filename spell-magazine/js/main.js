@@ -272,9 +272,6 @@ function addToDocument(spellArticle) {
     //Select spell list based on if the spell is prepared
 
     if (prepared[spellArticle.dataset.id]) {
-        if (preparedSpells.children.length >= calculateMaxPrepared()) {
-            spellArticle.classList.add('overMax');
-        }
         preparedSpells.appendChild(spellArticle);
     } else {
         let suffix = getNumberSuffix(parseInt(spellArticle.dataset.level, 10))
@@ -282,6 +279,8 @@ function addToDocument(spellArticle) {
         spellArticle.classList.remove('overMax');
         spellList.appendChild(spellArticle);
     }
+
+    markExcessivePreparedSpells();
 
 }
 
@@ -519,15 +518,50 @@ function getNumberSuffix(number) {
  * @param e - event
  */
 function formHandler(e) {
-    console.log(e.target.value);
+
+    //Get the correct error paragraph for displaying errors if there are any
+    let formErrorP;
+
+    if (e.target.name === 'charismaScore') {
+        formErrorP = document.getElementById('charismaScoreError');
+    } else if (e.target.name === 'paladinLevel') {
+        formErrorP = document.getElementById('paladinLevelError');
+    } else {
+        return;
+    }
+
+    //Check validity of input
+    if (e.target.validity.valid) {
+        formErrorP.innerText = '';
+    }
+
+    if (e.target.validity.rangeOverflow) {
+        formErrorP.innerText = `This number can not be higher than ${e.target.max}!`
+    }
+
+    if (e.target.validity.rangeUnderflow) {
+        formErrorP.innerText = `This number can not be lower than ${e.target.min}`
+    }
+
+    if (e.target.validity.valueMissing) {
+        formErrorP.innerText = `Field can not be empty`
+    }
+
+    //Validity.typeMismatch only works for email or telephone number types, so this was done instead
+    if (isNaN(parseInt(e.target.value, 10))) {
+        formErrorP.innerText = `Field must contain a number`;
+    }
+
+    //Return if there were any errors
+    if (formErrorP.innerText !== '') {
+        return;
+    }
 
     //Update paladin stats object
     if (e.target.name === 'charismaScore') {
         paladinStats.charisma = e.target.value;
-    } else if (e.target.name === 'paladinLevel') {
-        paladinStats.level = e.target.value;
     } else {
-        return;
+        paladinStats.level = e.target.value;
     }
 
     //Update the object in the local storage
@@ -535,7 +569,6 @@ function formHandler(e) {
 
     //Update the maximum prepared value in form
     inputFields.maxPrepared.value = calculateMaxPrepared();
-
 
     //Add class to spells exceeding the max prepared limit
     markExcessivePreparedSpells();
@@ -564,13 +597,22 @@ function calculateMaxPrepared() {
 }
 
 function markExcessivePreparedSpells() {
+    let overPrepared = false;
+    let overMaxErrorP = document.getElementById('overMaxError');
 
     for (const [key, preparedSpell] of Object.entries(preparedSpells.children)) {
         if (parseInt(key, 10) >= calculateMaxPrepared()) {
             preparedSpell.classList.add('overMax');
+            overPrepared = true;
         } else {
             preparedSpell.classList.remove('overMax');
         }
+    }
+
+    if (overPrepared) {
+        overMaxErrorP.innerText = `You've got too many spells prepared!`
+    } else {
+        overMaxErrorP.innerText = '';
     }
 
 }

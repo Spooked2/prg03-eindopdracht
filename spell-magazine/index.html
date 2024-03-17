@@ -37,10 +37,22 @@
             <div id="editable">
 
                 <label for="paladinLevel">Paladin level:</label>
-                <input type="number" id="paladinLevel" name="paladinLevel" min="2" max="20">
+
+                <div>
+
+                    <input type="number" id="paladinLevel" name="paladinLevel" min="2" max="20">
+                    <p id="paladinLevelError"></p>
+
+                </div>
 
                 <label for="charismaScore">Charisma score:</label>
-                <input type="number" id="charismaScore" name="charismaScore" min="0" max="30">
+
+                <div>
+
+                    <input type="number" id="charismaScore" name="charismaScore" min="0" max="30">
+                    <p id="charismaScoreError"></p>
+
+                </div>
 
             </div>
 
@@ -57,6 +69,8 @@
         </form>
 
     </div>
+
+    <p id="overMaxError"></p>
 
     <div id="preparedSpells"></div>
 
