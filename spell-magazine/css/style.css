@@ -216,3 +216,18 @@ input {
     text-align: center;
     background-color: #FFFCF2;
 }
+
+@media screen and (max-width: 1200px) {
+    body {
+        padding: 0 5vw 5vw;
+    }
+
+    article {
+        width: 20vw;
+    }
+
+    input {
+        width: 10vw;
+        height: 10vw;
+    }
+}

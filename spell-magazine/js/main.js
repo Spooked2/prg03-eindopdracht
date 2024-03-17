@@ -276,7 +276,9 @@ function addToDocument(spellArticle) {
     } else {
         let suffix = getNumberSuffix(parseInt(spellArticle.dataset.level, 10))
         let spellList = document.getElementById(`${spellArticle.dataset.level}${suffix}LevelList`);
+
         spellArticle.classList.remove('overMax');
+
         spellList.appendChild(spellArticle);
     }
 
@@ -515,7 +517,7 @@ function getNumberSuffix(number) {
 
 /**
  * Handles changes in the form
- * @param e - event
+ * @param {Event} e - event
  */
 function formHandler(e) {
 
@@ -547,7 +549,9 @@ function formHandler(e) {
         formErrorP.innerText = `Field can not be empty`
     }
 
-    //Validity.typeMismatch only works for email or telephone number types, so this was done instead
+    //Validity.typeMismatch only works for email or telephone number types,
+    //so instead the value of the input field will be converted to an integer,
+    //before being checked to see if the parseInt function returned a NaN
     if (isNaN(parseInt(e.target.value, 10))) {
         formErrorP.innerText = `Field must contain a number`;
     }
