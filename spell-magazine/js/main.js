@@ -205,7 +205,7 @@ function spellClickHandler(e) {
         return;
     }
 
-    //Fetch the details of the clicked spell if it hasn't been fetched already, then display them
+    //Fetch the details of the clicked spell if they haven't been fetched already, then display them
     if (id in fetchedDetails) {
         showSpellDetails(id);
     } else {
@@ -269,11 +269,12 @@ function prepareHandler(e, id) {
  * @param {HTMLElement} spellArticle
  */
 function addToDocument(spellArticle) {
-    //Select spell list based on if the spell is prepared
 
+    //Select spell list based on if the spell is prepared
     if (prepared[spellArticle.dataset.id]) {
         preparedSpells.appendChild(spellArticle);
     } else {
+        //Select the correct list based on the spell's level
         let suffix = getNumberSuffix(parseInt(spellArticle.dataset.level, 10))
         let spellList = document.getElementById(`${spellArticle.dataset.level}${suffix}LevelList`);
 
